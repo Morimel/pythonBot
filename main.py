@@ -1,10 +1,10 @@
 import asyncio
 
-
 from bot_config import dp, bot
 from handlers.start import start_router
 from handlers.picture import picture_router
-from handlers.other_messages import info_router, random_router
+from handlers.info import info_router
+from handlers.random import random_router
 
 
 async def main():
