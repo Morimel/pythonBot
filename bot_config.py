@@ -1,8 +1,8 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
+from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import dotenv_values
 
 
 token = dotenv_values(".env")["BOT_TOKEN"]
 bot = Bot(token=token)
-dp = Dispatcher()
+dp = Dispatcher(storage=MemoryStorage())

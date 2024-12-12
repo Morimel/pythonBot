@@ -1,11 +1,31 @@
-from aiogram import Router, types
+from aiogram import Router, types, F
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from handlers.review_dialog import RestourantReview  
 
+did_review = False
 
 start_router = Router()
 
-
 @start_router.message(Command("start"))
-async def start_haddler(message: types.Message):
+async def start_handler(message: types.Message):
     name = message.from_user.first_name
-    await message.answer(f"Привет, {name}!")
+    kb = types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [types.InlineKeyboardButton(text="Оставить отзыв", callback_data="review")]
+        ]
+    )
+    await message.answer(f"Привет, {name}!", reply_markup=kb)
+
+@start_router.callback_query(F.data == "review")
+async def review_button(callback: types.CallbackQuery, state: FSMContext):
+    global did_review 
+    
+    if did_review == False:
+        did_review = True
+        # Переводим пользователя в состояние RestourantReview.name
+        await callback.message.answer("Как вас зовут?")
+        await state.set_state(RestourantReview.name)
+        await callback.answer()
+    elif did_review == True:
+        await callback.message.answer("Опрос можно пройти только один раз")
