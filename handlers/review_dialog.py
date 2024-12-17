@@ -58,6 +58,6 @@ async def process_complaints(message: types.Message, state: FSMContext):
         f"Чистота: {user_data.get('cleaning')}\n"
         f"Комментарии: {user_data.get('complaints')}"
     )
-    database.save_review(user_data)
+    database.save_table(user_data)
     # остановка диалога 
     await state.clear()
