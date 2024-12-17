@@ -3,7 +3,6 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from handlers.review_dialog import RestourantReview  
 
-did_review = False
 
 start_router = Router()
 
@@ -19,7 +18,7 @@ async def start_handler(message: types.Message):
 
 @start_router.callback_query(F.data == "review")
 async def review_button(callback: types.CallbackQuery, state: FSMContext):
-    global did_review 
+    did_review = False
     
     if did_review == False:
         did_review = True
