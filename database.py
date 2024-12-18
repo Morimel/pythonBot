@@ -12,6 +12,7 @@ class Database:
                     name TEXT,
                     number TEXT,
                     cleaning INTEGER,
+                    date DATE,
                     complaints TEXT
                 )
             """)
@@ -21,7 +22,9 @@ class Database:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
                     price TEXT,
-                    weight TEXT
+                    weight TEXT, 
+                    description TEXT, 
+                    category TEXT
                 )
             """)
             conn.commit()
@@ -31,10 +34,10 @@ class Database:
             with sqlite3.connect(self.path) as conn:
                 conn.execute(
                     """
-                    INSERT INTO database_table (name, number, cleaning, complaints)
-                    VALUES (?, ?, ?, ?)
+                    INSERT INTO database_table (name, number, cleaning, date, complaints)
+                    VALUES (?, ?, ?, ?, ?)
                     """,
-                    (user_data["name"], user_data["number"], user_data["cleaning"], user_data["complaints"])
+                    (user_data["name"], user_data["number"], user_data["cleaning"], user_data["date"], user_data["complaints"])
                 )
                 conn.commit()
                 print("Данные успешно сохранены в базу данных.")
@@ -46,10 +49,10 @@ class Database:
             with sqlite3.connect(self.path) as conn:
                 conn.execute(
                     """
-                    INSERT INTO food (name, price, weight)
-                    VALUES (?, ?, ?)
+                    INSERT INTO food (name, price, weight, description, category)
+                    VALUES (?, ?, ?, ?, ?)
                     """,
-                    (user["name"], user["price"], user["weight"])
+                    (user["name"], user["price"], user["weight"], user["description"], user["category"])
                 )
                 conn.commit()
                 print("Данные успешно сохранены в базу данных.")

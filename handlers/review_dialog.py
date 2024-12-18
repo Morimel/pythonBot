@@ -13,6 +13,7 @@ class RestourantReview(StatesGroup):
     number = State()
     cleaning = State()
     complaints = State()
+    confirmation = State()
 
 @review_router.message(Command("review"))
 async def process_name(message: types.Message, state: FSMContext):
@@ -53,16 +54,38 @@ async def process_cleaning(message: types.Message, state: FSMContext):
 
 @review_router.message(RestourantReview.complaints)
 async def process_complaints(message: types.Message, state: FSMContext):
-    await state.update_data(complaints=message.text)
-    user_data = await state.get_data()
-    print("Данные для сохранения:", user_data)
-    await message.answer(
-        "Спасибо за ваш отзыв!\n\n"
-        f"Имя: {user_data.get('name')}\n"
-        f"Контакт: {user_data.get('number')}\n"
-        f"Чистота: {user_data.get('cleaning')}\n"
-        f"Комментарии: {user_data.get('complaints')}"
+    message_date = message.date  # Это datetime объект
+    formatted_date = message_date.strftime("%Y-%m-%d %H:%M:%S") # форматирование даты
+    await state.update_data(complaints=message.text, date=formatted_date)
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Confirm"), KeyboardButton(text="Deny")],
+        ],
+        resize_keyboard=True,  # Уменьшение размера кнопок
+        one_time_keyboard=True  # Клавиатура исчезает после выбора
     )
-    database.save_table(user_data)
-    # остановка диалога 
-    await state.clear()
+    await message.answer("Подтвердить данные?", reply_markup=keyboard)
+    await state.set_state(RestourantReview.confirmation)
+
+
+@review_router.message(RestourantReview.confirmation)
+async def process_confirmation(message: types.Message, state: FSMContext):
+    if message.text == "Confirm":
+        user_data = await state.get_data()
+        print("Данные для сохранения:", user_data)
+        await message.answer(
+            "Спасибо за ваш отзыв!\n\n"
+            f"Имя: {user_data.get('name')}\n"
+            f"Контакт: {user_data.get('number')}\n"
+            f"Чистота: {user_data.get('cleaning')}\n"
+            f"Дата: {user_data.get('date')}\n"
+            f"Комментарии: {user_data.get('complaints')}"
+        )
+        database.save_table(user_data)
+        # остановка диалога 
+        await state.clear()
+    elif message.text == "Deny":
+        await message.answer("Данные не сохранены")
+        return
+
+
