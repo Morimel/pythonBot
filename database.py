@@ -11,7 +11,7 @@ class Database:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
                     number TEXT,
-                    cleaning TEXT,
+                    cleaning INTEGER,
                     complaints TEXT
                 )
             """)

@@ -18,9 +18,14 @@ class RestourantReview(StatesGroup):
 async def process_name(message: types.Message, state: FSMContext):
     await message.answer("Как вас зовут?")
     await state.set_state(RestourantReview.name)
+        
 
 @review_router.message(RestourantReview.name)
 async def process_number(message: types.Message, state: FSMContext):
+    if len(message.text) < 5:  # Проверяем длину имени
+        await message.answer("Имя должно быть не меньше 5 символов. Попробуйте еще раз:")
+        return  # Прерываем выполнение, чтобы пользователь ввел имя заново
+    
     await state.update_data(name=message.text)
     await message.answer("Ваш номер телефона или инстаграм")
     await state.set_state(RestourantReview.number)
@@ -31,8 +36,8 @@ async def craete_keyboard(message: types.Message, state: FSMContext):
     # Создание текстовой клавиатуры
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Плохо"), KeyboardButton(text="Удовлетворительно")],
-            [KeyboardButton(text="Хорошо"), KeyboardButton(text="Отлично")]
+            [KeyboardButton(text="1"), KeyboardButton(text="2")],
+            [KeyboardButton(text="3"), KeyboardButton(text="4"), KeyboardButton(text="5")]
         ],
         resize_keyboard=True,  # Уменьшение размера кнопок
         one_time_keyboard=True  # Клавиатура исчезает после выбора
