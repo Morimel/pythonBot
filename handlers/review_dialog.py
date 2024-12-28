@@ -1,6 +1,6 @@
 from aiogram import Router, F, types
 from aiogram.filters import Command
-from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.state import StatesGroup, State, default_state
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
@@ -15,8 +15,15 @@ class RestourantReview(StatesGroup):
     complaints = State()
     confirmation = State()
 
-@review_router.message(Command("review"))
+@review_router.message(Command("stop"))
+@review_router.message(F.text == "стоп")
+async def stop_dialogue(message: types.Message, state: FSMContext):
+    await state.clear()
+    await message.answer("Опрос остановлен")
+
+@review_router.message(Command("review"), default_state)
 async def process_name(message: types.Message, state: FSMContext):
+    await message.answer("Для остановки введите слово 'стоп' или команду /stop")
     await message.answer("Как вас зовут?")
     await state.set_state(RestourantReview.name)
         

@@ -24,6 +24,7 @@ class Database:
                     price TEXT,
                     weight TEXT, 
                     description TEXT, 
+                    photo TEXT,
                     category TEXT
                 )
             """)
@@ -49,10 +50,10 @@ class Database:
             with sqlite3.connect(self.path) as conn:
                 conn.execute(
                     """
-                    INSERT INTO dishes (name, price, weight, description, category)
-                    VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO dishes (name, price, weight, description, photo, category)
+                    VALUES (?, ?, ?, ?, ?, ?)
                     """,
-                    (user["name"], user["price"], user["weight"], user["description"], user["category"])
+                    (user["name"], user["price"], user["weight"], user["description"], user["photo"], user["category"])
                 )
                 conn.commit()
                 print("Данные успешно сохранены в базу данных.")
