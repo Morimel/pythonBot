@@ -17,7 +17,7 @@ class Food(StatesGroup):
     description = State()
     category = State()
 
-@food_management_router.message(Command("newfood"))
+@food_management_router.message(Command("newdish"))
 async def create_new_food(message: types.Message, state: FSMContext):
     await message.answer("Введите название блюда")
     await state.set_state(Food.name)
@@ -60,6 +60,21 @@ async def process_category(message: types.Message, state: FSMContext):
     await state.update_data(category=message.text)
     data = await state.get_data()
     print(data)  # Логирование данных
-    database.save_food(data)  # Сохранение данных в базе
+    database.save_dishes(data)  # Сохранение данных в базе
     await message.answer("Блюдо сохранено", reply_markup=types.ReplyKeyboardRemove())
     await state.clear()  # Очистка состояния
+
+
+@food_management_router.message(Command("dishes"))
+async def show_all_dishes(message: types.Message):
+    dishes = database.get_all_dishes()
+    # Если список блюд пуст
+    if not dishes:
+        await message.answer("Список блюд пуст.")
+        return
+    # Преобразуем список в строку для отправки
+    dishes_text = "\n\n".join(
+        [f"Название: {dish['name']}\nЦена: {dish['price']}\nВес: {dish['weight']}\nКатегория: {dish['category']}" for dish in dishes]
+    )
+    # Отправляем список блюд в одном сообщении
+    await message.answer(dishes_text)

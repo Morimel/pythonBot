@@ -18,7 +18,7 @@ class Database:
             """)
             
             conn.execute("""
-                CREATE TABLE IF NOT EXISTS food (
+                CREATE TABLE IF NOT EXISTS dishes (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
                     price TEXT,
@@ -44,12 +44,12 @@ class Database:
         except Exception as e:
             print(f"Ошибка при сохранении данных: {e}")
 
-    def save_food(self, user: dict):
+    def save_dishes(self, user: dict):
         try:
             with sqlite3.connect(self.path) as conn:
                 conn.execute(
                     """
-                    INSERT INTO food (name, price, weight, description, category)
+                    INSERT INTO dishes (name, price, weight, description, category)
                     VALUES (?, ?, ?, ?, ?)
                     """,
                     (user["name"], user["price"], user["weight"], user["description"], user["category"])
@@ -58,3 +58,10 @@ class Database:
                 print("Данные успешно сохранены в базу данных.")
         except Exception as e:
             print(f"Ошибка при сохранении данных: {e}")
+        
+    def get_all_dishes(self):
+        with sqlite3.connect(self.path) as conn:
+            result = conn.execute("SELECT * from dishes")
+            result.row_factory = sqlite3.Row
+            data = result.fetchall()
+            return [dict(row) for row in data]

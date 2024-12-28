@@ -2,8 +2,7 @@ from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from handlers.review_dialog import RestourantReview  
-from handlers.food_manager import Food
-
+from handlers.dishes import Food
 
 start_router = Router()
 
@@ -17,6 +16,12 @@ async def start_handler(message: types.Message):
         ]
     )
     await message.answer(f"Привет, {name}!", reply_markup=kb)
+    
+@start_router.callback_query(F.data == "newfood")
+async def newfood_button(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.answer("Введите название блюда")
+    await state.set_state(Food.name)
+    await callback.answer()
 
 @start_router.callback_query(F.data == "review")
 async def review_button(callback: types.CallbackQuery, state: FSMContext):

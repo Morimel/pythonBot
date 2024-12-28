@@ -1,12 +1,12 @@
 import asyncio
 
 from bot_config import dp, bot, database
+from handlers.dishes import food_management_router
 from handlers.start import start_router
 from handlers.picture import picture_router
 from handlers.info import info_router
 from handlers.random import random_router
 from handlers.review_dialog import review_router
-from handlers.food_manager import food_management_router
 
 async def on_startup(bot):
     database.create_tables()
